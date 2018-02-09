@@ -1,5 +1,9 @@
 # Purescript Bonsai Virtual Dom
 
+[![Build Status](https://travis-ci.org/grmble/purescript-bonsai-vdom.svg?branch=master)](https://travis-ci.org/grmble/purescript-bonsai-vdom)
+
+
+
 This is the Elm Virtual Dom, changed to make it usable from
 Purescript instead of Elm.
 
