@@ -1,4 +1,8 @@
 -- | Purescript interface to Elm Virtual DOM
+-- |
+-- | This can be used as-is for speed, but it is much
+-- | more convenient to use the smolder style html api
+-- | in `Bonsai.Html`.
 module Bonsai.VirtualDom
   ( VNode
   , Property

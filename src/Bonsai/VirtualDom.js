@@ -1,20 +1,19 @@
 "use strict";
 
-// pulp build will "forget" top-level vars
-const STYLE_KEY = 'STYLE';
-const EVENT_KEY = 'EVENT';
-const ATTR_KEY = 'ATTR';
-const ATTR_NS_KEY = 'ATTR_NS';
-
 // close over a document - global or jsdom
 //
 // closedDoc is a top level constant in Elm VirtualDom
 // we need it to be an argument.
 // to keep the diff minimal, we close the whole elm source
 // over the document.
-//
-// XXX - see if performance suffers
 function closeOverDocument(localDoc) {
+
+var STYLE_KEY = 'STYLE';
+var EVENT_KEY = 'EVENT';
+var ATTR_KEY = 'ATTR';
+var ATTR_NS_KEY = 'ATTR_NS';
+
+
 
 ////////////  VIRTUAL DOM NODES  ////////////
 
@@ -1015,7 +1014,7 @@ function diffKeyedChildren(aParent, bParent, patches, rootIndex)
 ////////////  CHANGES FROM KEYED DIFF  ////////////
 
 
-const POSTFIX = '_elmW6BL';
+var POSTFIX = '_elmW6BL';
 
 
 function insertNode(changes, localPatches, key, vnode, bIndex, inserts)
@@ -1496,7 +1495,7 @@ function makeIgnorer(overlayNode)
 	}
 }
 
-const mostEvents = [
+var mostEvents = [
 	'click', 'dblclick', 'mousemove',
 	'mouseup', 'mousedown', 'mouseenter', 'mouseleave',
 	'touchstart', 'touchend', 'touchcancel', 'touchmove',
@@ -1508,7 +1507,7 @@ const mostEvents = [
 	'focus', 'blur'
 ];
 
-const allEvents = mostEvents.concat('wheel', 'scroll');
+var allEvents = mostEvents.concat('wheel', 'scroll');
 
 function topEventNode(eventNode) {
 	while(eventNode.parent) {
@@ -1560,7 +1559,7 @@ exports.applyPatchesFn6 = function (localDoc, cmdMap, emitter, domNode, oldVirtu
 		.applyPatches(domNode, oldVirtualNode, patches, mkEventNode(cmdMap, emitter));
 };
 
-const unclosed = closeOverDocument(undefined);
+var unclosed = closeOverDocument(undefined);
 
 exports.nodeFn3 = unclosed.nodeHelp;
 exports.text = unclosed.text;

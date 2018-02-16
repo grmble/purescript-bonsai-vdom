@@ -19,6 +19,8 @@
     "purescript-bonsai-types": "grmble/purescript-bonsai-types#master"
   },
   "devDependencies": {
-    "purescript-psci-support": "^3.0.0"
+    "purescript-psci-support": "^3.0.0",
+    "purescript-bonsai-jsdom": "grmble/purescript-bonsai-jsdom#master",
+    "purescript-test-unit": "^13.0.0"
   }
 }
