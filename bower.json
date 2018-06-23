@@ -14,11 +14,10 @@
     "output"
   ],
   "dependencies": {
-    "purescript-prelude": "^4.0.1",
-    "purescript-console": "^4.1.0",
     "purescript-bonsai-types": "grmble/purescript-bonsai-types#purs_0_12"
   },
   "devDependencies": {
+    "purescript-console": "^4.1.0",
     "purescript-psci-support": "^4.0.0",
     "purescript-bonsai-jsdom": "grmble/purescript-bonsai-jsdom#purs_0_12",
     "purescript-test-unit": "^14.0.0"
