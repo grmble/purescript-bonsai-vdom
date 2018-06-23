@@ -30,11 +30,11 @@ where
 import Prelude
 
 import Bonsai.DOM (Document, Element)
-import Bonsai.Types (BONSAI, Cmd)
-import Control.Monad.Eff (Eff)
-import Control.Monad.Eff.Exception (Error)
+import Bonsai.Types (Cmd)
+import Effect (Effect)
+import Effect.Exception (Error)
 import Data.Either (Either)
-import Data.Foreign (F, Foreign, toForeign)
+import Foreign (F, Foreign, unsafeToForeign)
 import Data.Function.Uncurried (Fn2, Fn3, Fn4, Fn6, runFn2, runFn3, runFn4, runFn6)
 import Data.Tuple (Tuple)
 
@@ -112,7 +112,7 @@ newtype Property msg =
 -- | would be in JavaScript, not `class` as it would appear in HTML.
 property :: forall a msg. String -> a -> Property msg
 property key value =
-  runFn2 propertyFn2 key (toForeign value)
+  runFn2 propertyFn2 key (unsafeToForeign value)
 
 foreign import propertyFn2
   :: forall msg
@@ -147,28 +147,28 @@ foreign import style :: forall msg. Array (Tuple String String) -> Property msg
 
 -- EVENTS
 
-type EventHandler aff msg =
-  Foreign -> F (Cmd aff msg)
+type EventHandler msg =
+  Foreign -> F (Cmd msg)
 
 -- internal concrete alias so we can get it into javascript
-type EventHandlerMap eff a b = (a -> b) -> EventHandler eff a -> EventHandler eff b
-eventHandlerMap :: forall eff a b. EventHandlerMap eff a b
+type EventHandlerMap a b = (a -> b) -> EventHandler a -> EventHandler b
+eventHandlerMap :: forall a b. EventHandlerMap a b
 eventHandlerMap fn =
   map (map (map fn))
 
 
 -- | Create a custom event listener.
-on :: forall eff msg. String -> (Foreign -> F (Cmd eff msg)) -> Property msg
+on :: forall msg. String -> (Foreign -> F (Cmd msg)) -> Property msg
 on eventName decoder =
   runFn3 onFn3 eventName defaultOptions decoder
 
 foreign import onFn3
-  :: forall eff msg
-  .  Fn3 String Options (Foreign -> F (Cmd eff msg)) (Property msg)
+  :: forall msg
+  .  Fn3 String Options (Foreign -> F (Cmd msg)) (Property msg)
 
 
 -- | Same as `on` but you can set a few options.
-onWithOptions :: forall eff msg. Options -> String -> (Foreign -> F (Cmd eff msg)) -> Property msg
+onWithOptions :: forall msg. Options -> String -> (Foreign -> F (Cmd msg)) -> Property msg
 onWithOptions opts str =
   runFn3 onFn3 str opts
 
@@ -261,21 +261,21 @@ foreign import keyedNodeFn3 ::
 -- |
 -- | If the emitting helper function returns true, the event
 -- | will be logged to the console.
-render
-  :: forall aff msg
+render 
+  :: forall msg
   .  Document
-  -> (F (Cmd aff msg) -> Eff aff Boolean)
+  -> (F (Cmd msg) -> Effect Boolean)
   -> VNode msg
   -> Element
 render doc = runFn4 renderFn4 doc cmdMap
 
 foreign import renderFn4
-  :: forall aff a msg
-  .  Fn4 Document (CmdMap aff a msg) (F (Cmd aff msg) -> Eff aff Boolean) (VNode msg) Element
+  :: forall a msg
+  .  Fn4 Document (CmdMap a msg) (F (Cmd msg) -> Effect Boolean) (VNode msg) Element
 
 -- internal concrete alias so we can get it into javascript
-type CmdMap aff a b = (a -> b) -> (Either Error (Cmd aff a)) -> (Either Error (Cmd aff b))
-cmdMap :: forall aff a b. CmdMap aff a b
+type CmdMap a b = (a -> b) -> (Either Error (Cmd a)) -> (Either Error (Cmd b))
+cmdMap :: forall a b. CmdMap a b
 cmdMap f a = map (map f) a
 
 -- | A Patch for efficient updates.
@@ -295,16 +295,16 @@ foreign import diffFn2
 -- | The DOM element should be the one from the last
 -- | diff/applyPatches pass, or the initially rendered one.
 applyPatches
-  :: forall eff aff msg
+  :: forall msg
   .  Document
-  -> (F (Cmd aff msg) -> Eff aff Boolean)
+  -> (F (Cmd msg) -> Effect Boolean)
   -> Element
   -> VNode msg
   -> Patch msg
-  -> Eff (bonsai::BONSAI|eff) Element
+  -> Effect Element
 applyPatches doc emitter domNode oldVirtualNode patches =
   pure $ runFn6 applyPatchesFn6 doc cmdMap emitter domNode oldVirtualNode patches
 
 foreign import applyPatchesFn6
-  :: forall aff a msg
-  .  Fn6 Document (CmdMap aff a msg) (F (Cmd aff msg) -> Eff aff Boolean) Element (VNode msg) (Patch msg) Element
+  :: forall a msg
+  .  Fn6 Document (CmdMap a msg) (F (Cmd msg) -> Effect Boolean) Element (VNode msg) (Patch msg) Element
