@@ -14,12 +14,12 @@
     "output"
   ],
   "dependencies": {
-    "purescript-bonsai-types": "grmble/purescript-bonsai-types#purs_0_12"
+    "purescript-bonsai-types": "grmble/purescript-bonsai-types#master"
   },
   "devDependencies": {
     "purescript-console": "^4.1.0",
     "purescript-psci-support": "^4.0.0",
-    "purescript-bonsai-jsdom": "grmble/purescript-bonsai-jsdom#purs_0_12",
+    "purescript-bonsai-jsdom": "grmble/purescript-bonsai-jsdom#master",
     "purescript-test-unit": "^14.0.0"
   }
 }
