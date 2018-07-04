@@ -16,6 +16,7 @@ module Bonsai.VirtualDom
   , style
   , on
   , onWithOptions
+  , filterOn
   , defaultOptions
   , lazy
   , lazy2
@@ -172,7 +173,24 @@ onWithOptions :: forall msg. Options -> String -> (Foreign -> F (Cmd msg)) -> Pr
 onWithOptions opts str =
   runFn3 onFn3 str opts
 
+foreign import filterOnFn4
+  :: forall msg
+  .  Fn4 String Options (Foreign -> Effect Boolean) (Foreign -> F (Cmd msg)) (Property msg)
 
+-- | onWithOptions with an event filter
+--
+-- Only events for with the filter returns true will be emitted.
+-- This lets us avoid the whole vdom/bonsai machinery if the events
+-- can be filtered.
+filterOn
+  :: forall msg
+  .  Options
+  -> String
+  -> (Foreign -> Effect Boolean)
+  -> (Foreign -> F (Cmd msg))
+  -> Property msg
+filterOn opts str filter decoder =
+  runFn4 filterOnFn4 str opts filter decoder
 
 -- | Options for an event listener. If `stopPropagation` is true, it means the
 -- | event stops traveling through the DOM so it will not trigger any other event

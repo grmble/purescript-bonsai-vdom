@@ -245,7 +245,26 @@ function on(name, options, decoder)
 		realKey: name,
 		value: {
 			options: options,
-			decoder: decoder
+			decoder: decoder,
+			filter: defaultFilter,
+		}
+	};
+}
+
+function defaultFilter(ev) {
+  return function() {
+    return true;
+  };
+}
+
+function filterOn(name, options, filter, decoder) {
+	return {
+		key: EVENT_KEY,
+		realKey: name,
+		value: {
+			options: options,
+			decoder: decoder,
+			filter: filter,
 		}
 	};
 }
@@ -264,7 +283,7 @@ function equalEvents(a, b)
 	// return _elm_lang$core$Native_Json.equality(a.decoder, b.decoder);
 	// XXX: event equality?
 	// console.log("event equality", a.decoder, b.decoder, a.decoder === b.decoder);
-	return a.decoder === b.decoder;
+	return a.decoder === b.decoder && a.filter === b.filter;
 }
 
 
@@ -275,9 +294,10 @@ function mapProperty(decodeMapper, func, property)
 		return property;
 	}
 
-	return on(
+	return filterOn(
 		property.realKey,
 		property.value.options,
+    property.value.filter,
 		decodeMapper(func)(property.value.decoder)
 	);
 }
@@ -445,13 +465,15 @@ function makeEventHandler(eventNode, info)
 	{
 		var info = eventHandler.info;
 
-		// var value = A2(_elm_lang$core$Native_Json.run,info.decoder, event);
-		var value = info.decoder(event);
+    var b = info.filter(event)();
 
 		// keep the indentation the same as in the Elm version
 		// in case of bugfixes upstream
-		if (true)
+		if (b)
 		{
+		  // var value = A2(_elm_lang$core$Native_Json.run,info.decoder, event);
+		  var value = info.decoder(event);
+
 			// event options stop propagation/preventdefault are only
 			// applied after successful EventDecoder.
 			// this is a feature: non standard options will
@@ -1525,6 +1547,7 @@ return {
 		attribute: attribute,
 		attributeNS: attributeNS,
 		on: on,
+    		filterOn: filterOn,
 		lazy: lazy,
 		lazy2: lazy2,
 		lazy3: lazy3,
@@ -1570,6 +1593,7 @@ exports.attributeFn2 = unclosed.attribute;
 exports.attributeFn3 = unclosed.attributeNS;
 exports.style = unclosed.style;
 exports.onFn3 = unclosed.on;
+exports.filterOnFn4 = unclosed.filterOn;
 exports.lazyFn2 = unclosed.lazy;
 exports.lazy2Fn3 = unclosed.lazy2;
 exports.lazy3Fn4 = unclosed.lazy3;
